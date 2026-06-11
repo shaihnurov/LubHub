@@ -51,11 +51,9 @@ namespace LubHub.Domain.Entities
         /// </summary>
         /// <param name="streamerId">ID of the streamer creating the raffle</param>
         /// <param name="title">Title of the raffle</param>
-        /// <param name="keyword">Chat keyword to register participants</param>
-        public static Raffle Create(int streamerId, string title, string keyword)
+        public static Raffle Create(int streamerId, string title)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(title);
-            ArgumentException.ThrowIfNullOrWhiteSpace(keyword);
 
             var raffle = new Raffle
             {
