@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/tests/">
+    <Project Path="tests/LubHub.IntegrationTests/LubHub.IntegrationTests.csproj" />
+    <Project Path="tests/LubHub.UnitTests/LubHub.UnitTests.csproj" />
+  </Folder>
+  <Project Path="LubHub.API/LubHub.API.csproj" />
+  <Project Path="LubHub.Application/LubHub.Application.csproj" />
+  <Project Path="LubHub.Domain/LubHub.Domain.csproj" />
+  <Project Path="LubHub.Infrastructure/LubHub.Infrastructure.csproj" />
+  <Project Path="LubHub.Persistence/LubHub.Persistence.csproj" />
+</Solution>

@@ -1,0 +1,6 @@
+@LubHub.API_HostAddress = http://localhost:5217
+
+GET {{LubHub.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
