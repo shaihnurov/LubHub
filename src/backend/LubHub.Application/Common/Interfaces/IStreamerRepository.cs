@@ -11,7 +11,7 @@ public interface IStreamerRepository : IBaseRepository<Streamer>
     /// Gets a streamer by their Twitch ID
     /// </summary>
     /// <param name="twitchId">Twitch ID of the streamer</param>
-    /// <param name="cancellationToken">Cancellation token</param>
+    /// <param name="ct">Cancellation token</param>
     /// <returns>Streamer if found, otherwise null</returns>
-    Task<Streamer?> GetByTwitchIdAsync(string twitchId, CancellationToken cancellationToken = default);
+    Task<Streamer?> GetByTwitchIdAsync(string twitchId, CancellationToken ct = default);
 }

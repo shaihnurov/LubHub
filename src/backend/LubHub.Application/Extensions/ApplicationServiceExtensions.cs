@@ -1,5 +1,5 @@
-﻿using LubHub.Application.Common.Behaviors;
-using FluentValidation;
+﻿using FluentValidation;
+using LubHub.Application.Common.Behaviors;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
