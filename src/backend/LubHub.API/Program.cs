@@ -9,6 +9,7 @@ builder.AddLogging();
 
 builder.Services.AddOpenApi();
 builder.Services.AddExceptionHandler<ExceptionHandlingMiddleware>();
+builder.Services.AddProblemDetails();
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices(builder.Configuration);
 
@@ -20,4 +21,4 @@ if (app.Environment.IsDevelopment())
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
 
-app.Run();
+await app.RunAsync();

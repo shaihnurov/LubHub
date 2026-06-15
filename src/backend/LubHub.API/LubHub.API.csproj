@@ -8,6 +8,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
   </ItemGroup>
@@ -16,6 +20,10 @@
     <ProjectReference Include="..\LubHub.Application\LubHub.Application.csproj" />
     <ProjectReference Include="..\LubHub.Infrastructure\LubHub.Infrastructure.csproj" />
     <ProjectReference Include="..\LubHub.Persistence\LubHub.Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\Responses\" />
   </ItemGroup>
 
 </Project>
