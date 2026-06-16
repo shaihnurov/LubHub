@@ -6,7 +6,7 @@ using LubHub.Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace LubHub.Infrastructure.Auth;
+namespace LubHub.Infrastructure.Services.Auth;
 
 /// <summary>
 /// Service for generating JWT tokens for authenticated streamers

@@ -1,4 +1,5 @@
-﻿using LubHub.API.Models.Requests;
+﻿using System.Security.Claims;
+using LubHub.API.Models.Requests;
 using LubHub.Application.Common.Extensions;
 using LubHub.Application.Raffles.Commands;
 using MediatR;
@@ -64,5 +65,23 @@ public class RafflesController(ISender sender) : ControllerBase
         var command = new CreateRaffleCommand(twitchId, request.Title);
         var raffleId = await sender.Send(command, cancellationToken);
         return Created($"/api/v1/raffles/{raffleId}", raffleId);
+    }
+
+    /// <summary>
+    /// Registers the authenticated viewer as a participant in the specified raffle
+    /// </summary>
+    /// <param name="id">ID of the raffle to join</param>
+    /// <returns>No content on success</returns>
+    [HttpPost("{id}/join")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> JoinRaffle(int id, CancellationToken cancellationToken)
+    {
+        var twitchUserId = User.GetTwitchId();
+        var displayName = User.FindFirst(ClaimTypes.Name)!.Value;
+        var command = new JoinRaffleCommand(id, twitchUserId, displayName);
+        await sender.Send(command, cancellationToken);
+        return NoContent();
     }
 }

@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace LubHub.Application.Raffles.Commands;
+namespace LubHub.Application.Raffles.Commands.Validator;
 
 /// <summary>
 /// Validator for <see cref="CreateRaffleCommand"/>

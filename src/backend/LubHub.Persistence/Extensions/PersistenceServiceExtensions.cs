@@ -24,6 +24,7 @@ public static class PersistenceServiceExtensions
 
         services.AddScoped<IRaffleRepository, RaffleRepository>();
         services.AddScoped<IStreamerRepository, StreamerRepository>();
+        services.AddScoped<IParticipantRepository, ParticipantRepository>();
 
         return services;
     }

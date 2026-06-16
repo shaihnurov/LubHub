@@ -5,7 +5,7 @@ using LubHub.Application.Common.Interfaces;
 using LubHub.Application.Common.Models;
 using Microsoft.Extensions.Configuration;
 
-namespace LubHub.Infrastructure.TwitchApi;
+namespace LubHub.Infrastructure.Services.TwitchApi;
 
 /// <summary>
 /// Service for interacting with the Twitch OAuth and Helix APIs
