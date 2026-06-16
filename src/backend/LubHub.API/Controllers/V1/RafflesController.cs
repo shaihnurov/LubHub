@@ -33,6 +33,23 @@ public class RafflesController(ISender sender) : ControllerBase
     }
 
     /// <summary>
+    /// Finishes an existing raffle, closing participant registration
+    /// </summary>
+    /// <param name="id">ID of the raffle to finish</param>
+    /// <returns>No content on success</returns>
+    [HttpPost("{id}/finish")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> FinishRaffle(int id, CancellationToken cancellationToken)
+    {
+        var twitchId = User.GetTwitchId();
+        var command = new FinishRaffleCommand(twitchId, id);
+        await sender.Send(command, cancellationToken);
+        return NoContent();
+    }
+
+    /// <summary>
     /// Creates a new raffle
     /// </summary>
     /// <param name="request">Raffle creation request</param>
