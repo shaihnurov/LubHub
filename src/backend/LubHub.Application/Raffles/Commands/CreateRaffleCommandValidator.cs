@@ -9,7 +9,7 @@ public class CreateRaffleCommandValidator : AbstractValidator<CreateRaffleComman
 {
     public CreateRaffleCommandValidator()
     {
-        RuleFor(x => x.StreamerId).GreaterThan(0).WithMessage("Streamer ID must be greater than 0");
+        RuleFor(x => x.TwitchId).NotEmpty().WithMessage("Twitch ID must not be empty");
 
         RuleFor(x => x.Title).NotEmpty().WithMessage("Title must not be empty")
             .MaximumLength(100).WithMessage("Title cannot exceed 100 characters");

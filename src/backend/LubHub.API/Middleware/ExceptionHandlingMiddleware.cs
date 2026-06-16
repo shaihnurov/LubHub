@@ -23,6 +23,7 @@ public class ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> lo
             NotFoundException => (LogLevel.Warning, StatusCodes.Status404NotFound, "Resource not found"),
             BusinessRuleException => (LogLevel.Warning, StatusCodes.Status409Conflict, "Business rule violated"),
             ValidationException => (LogLevel.Warning, StatusCodes.Status400BadRequest, "Validation error"),
+            UnauthorizedException => (LogLevel.Warning, StatusCodes.Status401Unauthorized, "Unauthorized on Twitch"),
             _ => (LogLevel.Error, StatusCodes.Status500InternalServerError, "Internal server error")
         };
 
