@@ -1,7 +1,10 @@
 ﻿using LubHub.Application.Common.Interfaces;
+using LubHub.Infrastructure.Consumers;
 using LubHub.Infrastructure.Services.Auth;
+using LubHub.Infrastructure.Services.EventBus;
 using LubHub.Infrastructure.Services.Redis;
 using LubHub.Infrastructure.Services.TwitchApi;
+using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
@@ -26,6 +29,31 @@ public static class InfrastructureServiceExtensions
 
         services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnection));
         services.AddScoped<IRedisService, RedisService>();
+
+        var rabbitHost = configuration["RabbitMQ:Host"]
+            ?? throw new InvalidOperationException("RabbitMQ:Host not found");
+        var rabbitUser = configuration["RabbitMQ:Username"]
+            ?? throw new InvalidOperationException("RabbitMQ:Username not found");
+        var rabbitPass = configuration["RabbitMQ:Password"]
+            ?? throw new InvalidOperationException("RabbitMQ:Password not found");
+
+        services.AddMassTransit(x =>
+        {
+            x.AddConsumer<JoinRaffleConsumer>();
+
+            x.UsingRabbitMq((ctx, cfg) =>
+            {
+                cfg.Host(rabbitHost, h =>
+                {
+                    h.Username(rabbitUser);
+                    h.Password(rabbitPass);
+                });
+
+                cfg.ConfigureEndpoints(ctx);
+            });
+        });
+
+        services.AddScoped<IEventBus, EventBusService>();
 
         return services;
     }

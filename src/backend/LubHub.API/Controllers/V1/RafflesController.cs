@@ -91,9 +91,9 @@ public class RafflesController(ISender sender) : ControllerBase
     /// Registers the authenticated viewer as a participant in the specified raffle
     /// </summary>
     /// <param name="id">ID of the raffle to join</param>
-    /// <returns>No content on success</returns>
+    /// <returns>Accepted</returns>
     [HttpPost("{id}/join")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> JoinRaffle(int id, CancellationToken cancellationToken)
@@ -102,6 +102,6 @@ public class RafflesController(ISender sender) : ControllerBase
         var displayName = User.FindFirst(ClaimTypes.Name)!.Value;
         var command = new JoinRaffleCommand(id, twitchUserId, displayName);
         await sender.Send(command, cancellationToken);
-        return NoContent();
+        return Accepted();
     }
 }

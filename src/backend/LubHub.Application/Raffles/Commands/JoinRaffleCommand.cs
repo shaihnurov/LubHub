@@ -1,5 +1,6 @@
 ﻿using LubHub.Application.Common.Exceptions;
 using LubHub.Application.Common.Interfaces;
+using LubHub.Application.Common.Messages;
 using LubHub.Domain.Entities;
 using LubHub.Domain.Enums;
 using MediatR;
@@ -17,8 +18,7 @@ public record JoinRaffleCommand(int RaffleId, string TwitchUserId, string Displa
 /// <summary>
 /// Handles the <see cref="JoinRaffleCommand"/> request
 /// </summary>
-public class JoinRaffleCommandHandler(IRaffleRepository raffleRepository, IRedisService redisService,
-    IParticipantRepository participantRepository) : IRequestHandler<JoinRaffleCommand>
+public class JoinRaffleCommandHandler(IRaffleRepository raffleRepository, IRedisService redisService, IEventBus eventBus) : IRequestHandler<JoinRaffleCommand>
 {
     /// <summary>
     /// Registers the viewer as a participant, using Redis for deduplication
@@ -38,7 +38,6 @@ public class JoinRaffleCommandHandler(IRaffleRepository raffleRepository, IRedis
         if (!await redisService.AddToSetAsync($"participants:{request.RaffleId}", request.TwitchUserId))
             throw new BusinessRuleException("Participant already joined this raffle.");
 
-        var participant = Participant.Create(request.RaffleId, request.TwitchUserId, request.DisplayName);
-        await participantRepository.AddAsync(participant, cancellationToken);
+        await eventBus.PublishAsync(new JoinRaffleMessage(request.RaffleId, request.TwitchUserId, request.DisplayName), cancellationToken);
     }
 }
