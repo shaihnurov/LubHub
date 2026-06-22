@@ -2,6 +2,7 @@ using LubHub.API.Extensions;
 using LubHub.API.Middleware;
 using LubHub.Application.Extensions;
 using LubHub.Infrastructure.Extensions;
+using LubHub.Infrastructure.Hubs;
 using LubHub.Persistence.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -29,5 +31,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<RaffleHub>("/hubs/raffle");
 
 await app.RunAsync();

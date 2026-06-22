@@ -18,7 +18,7 @@ public record DrawWinnerCommand(string TwitchId, int RaffleId) : IRequest<Winner
 /// Handles the <see cref="DrawWinnerCommand"/> request
 /// </summary>
 public class DrawWinnerCommandHandler(IRaffleRepository raffleRepository, IStreamerRepository streamerRepository, IParticipantRepository participantRepository,
-    IRedisService redis) : IRequestHandler<DrawWinnerCommand, WinnerResponse>
+    IRedisService redis, IRaffleHubService raffleHubService) : IRequestHandler<DrawWinnerCommand, WinnerResponse>
 {
     /// <summary>
     /// Draws a random winner from Redis, persists the result and returns winner details
@@ -49,6 +49,7 @@ public class DrawWinnerCommandHandler(IRaffleRepository raffleRepository, IStrea
 
         raffle.SetWinner(winner);
         await raffleRepository.UpdateAsync(raffle, ct);
+        await raffleHubService.SendWinnerAsync(raffle.Id, winnerTwitchId, member.DisplayName, ct);
 
         return new WinnerResponse(member.Id, winnerTwitchId, member.DisplayName);
     }

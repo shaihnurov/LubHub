@@ -19,4 +19,10 @@ public interface IRedisService
     /// <param name="key">Redis set key</param>
     /// <returns>Random value from the set, or null if the set is empty or does not exist</returns>
     Task<string?> GetRandomFromSetAsync(string key);
+
+    /// <summary>
+    /// Returns the number of members in a Redis set
+    /// </summary>
+    /// <param name="key">Redis set key</param>
+    Task<long> GetSetCountAsync(string key);
 }

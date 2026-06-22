@@ -3,6 +3,7 @@ using LubHub.Infrastructure.Consumers;
 using LubHub.Infrastructure.Services.Auth;
 using LubHub.Infrastructure.Services.EventBus;
 using LubHub.Infrastructure.Services.Redis;
+using LubHub.Infrastructure.Services.SignalR;
 using LubHub.Infrastructure.Services.TwitchApi;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +24,7 @@ public static class InfrastructureServiceExtensions
     {
         services.AddHttpClient<ITwitchAuthService, TwitchAuthService>();
         services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<IRaffleHubService, RaffleHubService>();
 
         var redisConnection = configuration.GetConnectionString("Redis")
             ?? throw new InvalidOperationException("Connection string 'Redis' not found");

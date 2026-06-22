@@ -20,4 +20,8 @@ public class RedisService(IConnectionMultiplexer redis) : IRedisService
         var value = await _db.SetRandomMemberAsync(key);
         return value.IsNull ? null : value.ToString();
     }
+
+    /// <inheritdoc/>
+    public async Task<long> GetSetCountAsync(string key)
+        => await _db.SetLengthAsync(key);
 }
