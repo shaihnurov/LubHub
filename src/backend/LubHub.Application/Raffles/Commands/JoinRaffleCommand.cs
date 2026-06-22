@@ -17,7 +17,7 @@ public record JoinRaffleCommand(int RaffleId, string TwitchUserId, string Displa
 /// <summary>
 /// Handles the <see cref="JoinRaffleCommand"/> request
 /// </summary>
-public class JoinRaffleCommandHandler(IRaffleRepository raffleRepository, IRedisService redisService, 
+public class JoinRaffleCommandHandler(IRaffleRepository raffleRepository, IRedisService redisService,
     IParticipantRepository participantRepository) : IRequestHandler<JoinRaffleCommand>
 {
     /// <summary>

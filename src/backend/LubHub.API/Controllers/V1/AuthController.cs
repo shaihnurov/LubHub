@@ -1,4 +1,5 @@
-﻿using LubHub.Application.Auth.Commands;
+﻿using Asp.Versioning;
+using LubHub.Application.Auth.Commands;
 using LubHub.Application.Auth.Responses;
 using LubHub.Application.Common.Interfaces;
 using MediatR;
@@ -10,7 +11,8 @@ namespace LubHub.API.Controllers.V1;
 /// Controller for handling Twitch OAuth authentication
 /// </summary>
 [ApiController]
-[Route("api/v1/[controller]")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class AuthController(
     ITwitchAuthService twitchAuthService,
     ISender sender,

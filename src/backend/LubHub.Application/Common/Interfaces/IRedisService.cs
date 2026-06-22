@@ -12,4 +12,11 @@ public interface IRedisService
     /// <param name="value">Value to add</param>
     /// <returns>True if added successfully, false if the value already existed in the set</returns>
     Task<bool> AddToSetAsync(string key, string value);
+
+    /// <summary>
+    /// Returns a random value from a Redis set without removing it
+    /// </summary>
+    /// <param name="key">Redis set key</param>
+    /// <returns>Random value from the set, or null if the set is empty or does not exist</returns>
+    Task<string?> GetRandomFromSetAsync(string key);
 }

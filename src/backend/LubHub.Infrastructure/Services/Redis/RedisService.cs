@@ -10,12 +10,14 @@ public class RedisService(IConnectionMultiplexer redis) : IRedisService
 {
     private readonly IDatabase _db = redis.GetDatabase();
 
-    /// <summary>
-    /// Adds a value to a Redis set. Returns false if the value already exists in the set
-    /// </summary>
-    /// <param name="key">Redis set key</param>
-    /// <param name="value">Value to add</param>
-    /// <returns>True if added, false if already present</returns>
+    /// <inheritdoc/>
     public async Task<bool> AddToSetAsync(string key, string value)
         => await _db.SetAddAsync(key, value);
+
+    /// <inheritdoc/>
+    public async Task<string?> GetRandomFromSetAsync(string key)
+    {
+        var value = await _db.SetRandomMemberAsync(key);
+        return value.IsNull ? null : value.ToString();
+    }
 }

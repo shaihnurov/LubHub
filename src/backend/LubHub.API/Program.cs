@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddLogging();
 
+builder.Services.AddVersioning();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddExceptionHandler<ExceptionHandlingMiddleware>();

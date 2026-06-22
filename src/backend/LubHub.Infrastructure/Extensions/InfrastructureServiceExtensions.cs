@@ -21,7 +21,7 @@ public static class InfrastructureServiceExtensions
         services.AddHttpClient<ITwitchAuthService, TwitchAuthService>();
         services.AddScoped<IJwtService, JwtService>();
 
-        var redisConnection = configuration.GetConnectionString("Redis") 
+        var redisConnection = configuration.GetConnectionString("Redis")
             ?? throw new InvalidOperationException("Connection string 'Redis' not found");
 
         services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnection));
