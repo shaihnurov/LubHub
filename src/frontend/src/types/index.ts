@@ -1,4 +1,4 @@
-﻿export type RaffleStatus = "live" | "ending" | "upcoming" | "ended";
+export type RaffleStatus = "live" | "ending" | "upcoming" | "ended";
 
 export interface Feature {
   icon: React.ReactNode;

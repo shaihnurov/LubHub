@@ -22,6 +22,9 @@ export interface Raffle {
   status: RaffleStatus;
   startedAt: string | null;
   endedAt: string | null;
+  participantCount: number;
+  streamerName: string;
+  winner?: WinnerResponse | null;
 }
 
 export interface Participant {
@@ -33,17 +36,22 @@ export interface Participant {
   isSuspected: boolean;
 }
 
+export interface UserProfile {
+  twitchId: string;
+  displayName: string;
+  email: string;
+  rafflesCreated: number;
+  rafflesParticipated: number;
+  wins: number;
+  createdAt: string;
+}
+
 export interface ApiError {
   type: string;
   title: string;
   status: number;
   detail?: string;
 }
-
-export type RaffleHubEvent =
-  | "ParticipantCountUpdated"
-  | "WinnerDrawn"
-  | "JoinConfirmed";
 
 export interface RaffleHubHandlers {
   onParticipantCountUpdated?: (count: number) => void;

@@ -1,5 +1,7 @@
-﻿"use client";
+"use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NAV_LINKS } from "@/constants";
@@ -9,6 +11,7 @@ import { Logo } from "@/components/ui/Logo";
 import { TwitchIcon } from "@/components/ui/TwitchIcon";
 
 export default function Navbar() {
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { isAuthenticated, displayName, loginWithTwitch, logout } = useAuth();
@@ -18,6 +21,10 @@ export default function Navbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const handleDashboardClick = () => {
+    router.push("/dashboard");
+  };
 
   return (
     <motion.nav
@@ -30,12 +37,12 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-8 lg:px-12">
         <div className="flex items-center justify-between h-18 lg:h-22">
-          <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
             <Logo size={36} />
             <span className="text-xl font-semibold tracking-tight">
               Lub<span className="text-gradient">Hub</span>
             </span>
-          </div>
+          </Link>
 
           <div className="hidden md:flex items-center gap-10">
             {NAV_LINKS.map((item) => (
@@ -53,9 +60,12 @@ export default function Navbar() {
           <div className="flex items-center gap-4">
             {isAuthenticated ? (
               <div className="hidden sm:flex items-center gap-3">
-                <span className="text-sm text-foreground/60">
+                <button
+                  onClick={handleDashboardClick}
+                  className="text-sm text-foreground/60 hover:text-foreground transition-colors"
+                >
                   {displayName}
-                </span>
+                </button>
                 <button
                   onClick={logout}
                   className="px-4 py-2.5 rounded-xl glass text-foreground/70 hover:text-foreground text-sm font-medium transition-all duration-300 active:scale-95"
@@ -117,7 +127,15 @@ export default function Navbar() {
               ))}
               {isAuthenticated ? (
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-foreground/60">{displayName}</span>
+                  <button
+                    onClick={() => {
+                      handleDashboardClick();
+                      setMobileOpen(false);
+                    }}
+                    className="text-sm text-foreground/60"
+                  >
+                    {displayName}
+                  </button>
                   <button
                     onClick={() => {
                       logout();

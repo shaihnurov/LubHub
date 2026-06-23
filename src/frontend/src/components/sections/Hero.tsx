@@ -1,6 +1,7 @@
-﻿"use client";
+"use client";
 
 import { useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { HERO_STATS } from "@/constants";
 import { EASE_OUT } from "@/lib/animations";
@@ -39,8 +40,17 @@ const comets = [
 ];
 
 export default function Hero() {
+  const router = useRouter();
   const stars = useMemo(() => generateStars(20, 42), []);
   const { isAuthenticated, loginWithTwitch } = useAuth();
+
+  const handlePrimaryAction = () => {
+    if (isAuthenticated) {
+      router.push("/dashboard");
+    } else {
+      loginWithTwitch();
+    }
+  };
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -116,7 +126,7 @@ export default function Hero() {
           className="flex flex-col sm:flex-row items-center justify-center gap-5"
         >
           <button
-            onClick={loginWithTwitch}
+            onClick={handlePrimaryAction}
             className="group relative px-10 py-5 rounded-2xl bg-[#9146ff] text-white font-semibold text-base transition-all duration-500 hover:shadow-2xl hover:shadow-[#9146ff]/30 active:scale-95 overflow-hidden"
           >
             <span className="relative z-10 flex items-center gap-3">

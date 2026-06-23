@@ -1,4 +1,4 @@
-﻿import { FOOTER_LINKS, FOOTER_SOCIALS } from "@/constants";
+import { FOOTER_LINKS, FOOTER_SOCIALS } from "@/constants";
 import { Logo } from "@/components/ui/Logo";
 
 export default function Footer() {

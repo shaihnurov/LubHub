@@ -1,11 +1,21 @@
-﻿"use client";
+"use client";
 
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAuth } from "@/lib/auth";
 import { TwitchIcon } from "@/components/ui/TwitchIcon";
 
 export default function CTA() {
+  const router = useRouter();
   const { isAuthenticated, loginWithTwitch } = useAuth();
+
+  const handlePrimaryAction = () => {
+    if (isAuthenticated) {
+      router.push("/dashboard");
+    } else {
+      loginWithTwitch();
+    }
+  };
 
   return (
     <section className="relative py-32 px-8 overflow-hidden">
@@ -35,7 +45,7 @@ export default function CTA() {
           </p>
 
           <button
-            onClick={loginWithTwitch}
+            onClick={handlePrimaryAction}
             className="group relative inline-flex items-center gap-3 px-12 py-6 rounded-2xl bg-[#9146ff] text-white font-semibold text-lg transition-all duration-500 hover:shadow-2xl hover:shadow-[#9146ff]/30 active:scale-95 overflow-hidden"
           >
             <span className="relative z-10 flex items-center gap-3">

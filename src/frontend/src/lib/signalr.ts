@@ -1,15 +1,12 @@
-﻿import {
-  HubConnection,
-  HubConnectionBuilder,
-  HubConnectionState,
-  LogLevel,
-} from "@microsoft/signalr";
+﻿import { HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
 import type { RaffleHubHandlers } from "@/types/api";
 import { getToken } from "@/lib/token";
+import { logger } from "@/lib/logger";
 
 const HUB_PATH = "/hubs/raffle";
 
 let connection: HubConnection | null = null;
+let isConnecting = false;
 
 function getHubUrl(): string {
   const baseUrl = process.env.NEXT_PUBLIC_SIGNALR_URL ?? "http://localhost:5217";
@@ -20,11 +17,9 @@ export function getRaffleHub(): HubConnection {
   if (connection) return connection;
 
   connection = new HubConnectionBuilder()
-    .withUrl(getHubUrl(), {
-      accessTokenFactory: () => getToken() ?? "",
-    })
+    .withUrl(getHubUrl(), { accessTokenFactory: () => getToken() ?? "" })
     .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
-    .configureLogging(LogLevel.Information)
+    .configureLogging(LogLevel.Warning)
     .build();
 
   return connection;
@@ -34,12 +29,16 @@ export async function startRaffleHub(): Promise<void> {
   const hub = getRaffleHub();
 
   if (hub.state === HubConnectionState.Connected) return;
+  if (isConnecting) return;
 
+  isConnecting = true;
   try {
     await hub.start();
   } catch (err) {
-    console.error("[SignalR] Failed to connect:", err);
+    logger.error("SignalR connection failed", err);
     throw err;
+  } finally {
+    isConnecting = false;
   }
 }
 
