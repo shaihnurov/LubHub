@@ -1,4 +1,4 @@
-using LubHub.API.Extensions;
+﻿using LubHub.API.Extensions;
 using LubHub.API.Middleware;
 using LubHub.Application.Extensions;
 using LubHub.Infrastructure.Extensions;
@@ -12,6 +12,7 @@ builder.AddLogging();
 builder.Services.AddVersioning();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddCorsPolicy(builder.Configuration);
 builder.Services.AddExceptionHandler<ExceptionHandlingMiddleware>();
 builder.Services.AddProblemDetails();
 builder.Services.AddJwtAuthentication(builder.Configuration);
@@ -28,6 +29,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
+app.UseCorsPolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
