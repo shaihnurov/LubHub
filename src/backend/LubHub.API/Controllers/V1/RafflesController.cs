@@ -41,13 +41,28 @@ public class RafflesController(ISender sender) : ControllerBase
     /// Retrieves the raffle history for the authenticated streamer
     /// </summary>
     /// <returns>List of raffles created by the streamer</returns>
-    [HttpGet]
+    [HttpGet("my")]
     [ProducesResponseType(typeof(IReadOnlyList<RaffleResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> GetStreamerHistory(CancellationToken cancellationToken)
     {
         var twitchId = User.GetTwitchId();
         var raffles = await sender.Send(new GetStreamerHistoryQuery(twitchId), cancellationToken);
+        return Ok(raffles);
+    }
+
+    /// <summary>
+    /// Retrieves a public list of all raffles with optional filtering
+    /// </summary>
+    /// <param name="status">Optional status filter: Pending, Active, Finished, Drawn</param>
+    /// <param name="limit">Optional maximum number of raffles to return</param>
+    /// <returns>List of raffles matching the filter</returns>
+    [AllowAnonymous]
+    [HttpGet]
+    [ProducesResponseType(typeof(IReadOnlyList<RaffleResponse>), StatusCodes.Status200OK)]
+    public async Task<ActionResult> GetAllRaffles([FromQuery] string? status, [FromQuery] int? limit, CancellationToken cancellationToken)
+    {
+        var raffles = await sender.Send(new GetPublicRafflesQuery(status, limit), cancellationToken);
         return Ok(raffles);
     }
 

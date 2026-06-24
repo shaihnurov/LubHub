@@ -24,7 +24,5 @@ public class StreamerConfiguration : IEntityTypeConfiguration<Streamer>
         builder.Property(x => x.DisplayName).IsRequired().HasMaxLength(100);
 
         builder.Property(x => x.Email).IsRequired().HasMaxLength(200);
-
-        builder.HasMany(x => x.Raffles).WithOne().HasForeignKey(x => x.StreamerId).OnDelete(DeleteBehavior.Cascade);
     }
 }

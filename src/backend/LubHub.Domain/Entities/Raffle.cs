@@ -15,6 +15,11 @@ namespace LubHub.Domain.Entities
         public int StreamerId { get; private set; }
 
         /// <summary>
+        /// Navigation property to the streamer who created this raffle
+        /// </summary>
+        public Streamer? Streamer { get; private set; }
+
+        /// <summary>
         /// Title of the raffle
         /// </summary>
         public string Title { get; private set; } = string.Empty;

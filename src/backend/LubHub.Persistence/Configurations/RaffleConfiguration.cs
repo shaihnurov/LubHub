@@ -22,6 +22,8 @@ public class RaffleConfiguration : IEntityTypeConfiguration<Raffle>
 
         builder.Property(x => x.Status).IsRequired();
 
+        builder.HasOne(x => x.Streamer).WithMany(x => x.Raffles).HasForeignKey(x => x.StreamerId).OnDelete(DeleteBehavior.Cascade);
+
         builder.HasMany(x => x.Participants).WithOne().HasForeignKey(x => x.RaffleId).OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(x => x.Winner).WithOne().HasForeignKey<Winner>(x => x.RaffleId).OnDelete(DeleteBehavior.Cascade);

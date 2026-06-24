@@ -17,6 +17,8 @@ public class RaffleResponseMappingConfig : IRegister
     {
         config.NewConfig<Raffle, RaffleResponse>()
             .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.StreamerId, src => src.StreamerId)
+            .Map(dest => dest.StreamerName, src => src.Streamer != null ? src.Streamer.DisplayName : string.Empty)
             .Map(dest => dest.Title, src => src.Title)
             .Map(dest => dest.Status, src => src.Status.ToString())
             .Map(dest => dest.CreatedAt, src => src.CreatedAt)
