@@ -1,5 +1,8 @@
-﻿using FluentValidation;
+﻿using System.Reflection;
+using FluentValidation;
 using LubHub.Application.Common.Behaviors;
+using Mapster;
+using MapsterMapper;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,6 +20,12 @@ public static class ApplicationServiceExtensions
     /// <returns>The updated service collection</returns>
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
+        var config = TypeAdapterConfig.GlobalSettings;
+        config.Scan(Assembly.GetExecutingAssembly());
+
+        services.AddSingleton(config);
+        services.AddScoped<IMapper, ServiceMapper>();
+
         services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssembly(typeof(ApplicationServiceExtensions).Assembly));
 

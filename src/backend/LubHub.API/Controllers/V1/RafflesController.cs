@@ -3,6 +3,8 @@ using Asp.Versioning;
 using LubHub.API.Models.Requests;
 using LubHub.Application.Common.Extensions;
 using LubHub.Application.Raffles.Commands;
+using LubHub.Application.Raffles.Queries;
+using LubHub.Application.Raffles.Responses;
 using LubHub.Application.Winners.Commands;
 using LubHub.Application.Winners.Responses;
 using MediatR;
@@ -21,6 +23,21 @@ namespace LubHub.API.Controllers.V1;
 public class RafflesController(ISender sender) : ControllerBase
 {
     /// <summary>
+    /// Retrieves a raffle by its ID without requiring authentication
+    /// </summary>
+    /// <param name="id">ID of the raffle to retrieve</param>
+    /// <returns>Raffle details</returns>
+    [AllowAnonymous]
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(RaffleResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> GetRaffleById(int id, CancellationToken cancellationToken)
+    {
+        var raffle = await sender.Send(new GetRaffleByIdQuery(id), cancellationToken);
+        return Ok(raffle);
+    }
+
+    /// <summary>
     /// Starts an existing raffle, opening participant registration
     /// </summary>
     /// <param name="id">ID of the raffle to start</param>
@@ -32,8 +49,7 @@ public class RafflesController(ISender sender) : ControllerBase
     public async Task<IActionResult> StartRaffle(int id, CancellationToken cancellationToken)
     {
         var twitchId = User.GetTwitchId();
-        var command = new StartRaffleCommand(twitchId, id);
-        await sender.Send(command, cancellationToken);
+        await sender.Send(new StartRaffleCommand(twitchId, id), cancellationToken);
         return NoContent();
     }
 
@@ -49,8 +65,7 @@ public class RafflesController(ISender sender) : ControllerBase
     public async Task<IActionResult> FinishRaffle(int id, CancellationToken cancellationToken)
     {
         var twitchId = User.GetTwitchId();
-        var command = new FinishRaffleCommand(twitchId, id);
-        await sender.Send(command, cancellationToken);
+        await sender.Send(new FinishRaffleCommand(twitchId, id), cancellationToken);
         return NoContent();
     }
 
@@ -82,8 +97,7 @@ public class RafflesController(ISender sender) : ControllerBase
     public async Task<IActionResult> CreateRaffle([FromBody] CreateRaffleRequest request, CancellationToken cancellationToken)
     {
         var twitchId = User.GetTwitchId();
-        var command = new CreateRaffleCommand(twitchId, request.Title);
-        var raffleId = await sender.Send(command, cancellationToken);
+        var raffleId = await sender.Send(new CreateRaffleCommand(twitchId, request.Title), cancellationToken);
         return Created($"/api/v1/raffles/{raffleId}", raffleId);
     }
 
@@ -100,8 +114,7 @@ public class RafflesController(ISender sender) : ControllerBase
     {
         var twitchUserId = User.GetTwitchId();
         var displayName = User.FindFirst(ClaimTypes.Name)!.Value;
-        var command = new JoinRaffleCommand(id, twitchUserId, displayName);
-        await sender.Send(command, cancellationToken);
+        await sender.Send(new JoinRaffleCommand(id, twitchUserId, displayName), cancellationToken);
         return Accepted();
     }
 }
