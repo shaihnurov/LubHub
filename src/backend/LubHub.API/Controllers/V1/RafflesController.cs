@@ -23,6 +23,20 @@ namespace LubHub.API.Controllers.V1;
 public class RafflesController(ISender sender) : ControllerBase
 {
     /// <summary>
+    /// Retrieves the raffle history for the authenticated streamer
+    /// </summary>
+    /// <returns>List of raffles created by the streamer</returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(IReadOnlyList<RaffleResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> GetStreamerHistory(CancellationToken cancellationToken)
+    {
+        var twitchId = User.GetTwitchId();
+        var raffles = await sender.Send(new GetStreamerHistoryQuery(twitchId), cancellationToken);
+        return Ok(raffles);
+    }
+
+    /// <summary>
     /// Retrieves a raffle by its ID without requiring authentication
     /// </summary>
     /// <param name="id">ID of the raffle to retrieve</param>
