@@ -23,6 +23,21 @@ namespace LubHub.API.Controllers.V1;
 public class RafflesController(ISender sender) : ControllerBase
 {
     /// <summary>
+    /// Retrieves all participants of the specified raffle
+    /// </summary>
+    /// <param name="id">ID of the raffle</param>
+    /// <returns>List of participants with bot scores</returns>
+    [AllowAnonymous]
+    [HttpGet("{id}/participants")]
+    [ProducesResponseType(typeof(IReadOnlyList<ParticipantResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> GetRaffleParticipants(int id, CancellationToken cancellationToken)
+    {
+        var participants = await sender.Send(new GetRaffleParticipantsQuery(id), cancellationToken);
+        return Ok(participants);
+    }
+
+    /// <summary>
     /// Retrieves the raffle history for the authenticated streamer
     /// </summary>
     /// <returns>List of raffles created by the streamer</returns>
