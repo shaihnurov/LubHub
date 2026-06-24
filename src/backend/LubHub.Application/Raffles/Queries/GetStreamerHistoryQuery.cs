@@ -16,7 +16,7 @@ public record GetStreamerHistoryQuery(string TwitchId) : IRequest<IReadOnlyList<
 /// <summary>
 /// Handles the <see cref="GetStreamerHistoryQuery"/> request
 /// </summary>
-public class GetStreamerHistoryQueryHandler(IRaffleRepository raffleRepository, IStreamerRepository streamerRepository) 
+public class GetStreamerHistoryQueryHandler(IRaffleRepository raffleRepository, IStreamerRepository streamerRepository)
     : IRequestHandler<GetStreamerHistoryQuery, IReadOnlyList<RaffleResponse>>
 {
     /// <summary>
