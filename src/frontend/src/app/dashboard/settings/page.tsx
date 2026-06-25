@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -11,7 +11,10 @@ import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function SettingsPage() {
   useAuth();
-  const { data: profile, isLoading } = useSWR("profile", api.profile.get);
+  const { data: profile, isLoading } = useSWR("profile", api.profile.get, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
   
   const [notifications, setNotifications] = useState({
     emailNotifications: true,

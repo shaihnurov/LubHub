@@ -3,6 +3,7 @@
 export interface AuthResponse {
   token: string;
   displayName: string;
+  twitchId: string;
 }
 
 export interface WinnerResponse {

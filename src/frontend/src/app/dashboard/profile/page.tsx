@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import useSWR from "swr";
@@ -8,7 +8,10 @@ import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function ProfilePage() {
   const { displayName } = useAuth();
-  const { data: profile, isLoading } = useSWR("profile", api.profile.get);
+  const { data: profile, isLoading } = useSWR("profile", api.profile.get, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
 
   if (isLoading) {
     return (

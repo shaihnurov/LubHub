@@ -22,9 +22,9 @@ public class JwtService(IConfiguration configuration) : IJwtService
 
         var claims = new[]
         {
-            new Claim("sub", streamer.TwitchId.ToString()),
-            new Claim("name", streamer.DisplayName),
-            new Claim("email", streamer.Email)
+            new Claim(ClaimTypes.NameIdentifier, streamer.TwitchId.ToString()),
+            new Claim(ClaimTypes.Name, streamer.DisplayName),
+            new Claim(ClaimTypes.Email, streamer.Email)
         };
 
         var token = new JwtSecurityToken(

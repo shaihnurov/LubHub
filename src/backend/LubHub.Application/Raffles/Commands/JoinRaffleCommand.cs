@@ -1,4 +1,4 @@
-﻿using LubHub.Application.Common.Exceptions;
+using LubHub.Application.Common.Exceptions;
 using LubHub.Application.Common.Interfaces;
 using LubHub.Application.Common.Messages;
 using LubHub.Domain.Entities;
@@ -34,6 +34,9 @@ public class JoinRaffleCommandHandler(IRaffleRepository raffleRepository, IRedis
 
         if (raffle.Status != RaffleStatus.Active)
             throw new BusinessRuleException("Only active raffles can be joined.");
+
+        if (raffle.StreamerId.ToString() == request.TwitchUserId)
+            throw new BusinessRuleException("You cannot join your own raffle.");
 
         if (!await redisService.AddToSetAsync($"participants:{request.RaffleId}", request.TwitchUserId))
             throw new BusinessRuleException("Participant already joined this raffle.");

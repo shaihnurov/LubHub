@@ -3,13 +3,14 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
-import { setToken } from "@/lib/token";
+import { useAuth } from "@/lib/auth";
 
 function AuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
   const [error, setError] = useState<string | null>(null);
+  const { login } = useAuth();
 
   useEffect(() => {
     if (!code) return;
@@ -20,7 +21,7 @@ function AuthCallbackContent() {
       .exchangeTwitchCode(code)
       .then((response) => {
         if (!active) return;
-        setToken(response.token, response.displayName);
+        login(response.token, response.displayName, response.twitchId);
         router.replace("/");
       })
       .catch((err) => {
@@ -31,7 +32,7 @@ function AuthCallbackContent() {
     return () => {
       active = false;
     };
-  }, [code, router]);
+  }, [code, router, login]);
 
   if (!code) {
     return (

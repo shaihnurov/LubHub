@@ -30,6 +30,6 @@ public class AuthenticateWithTwitchCommandHandler(IStreamerRepository streamerRe
         }
 
         var token = jwtService.GenerateToken(streamer);
-        return new AuthResponse(token, streamer.DisplayName);
+        return new AuthResponse(token, streamer.DisplayName, streamer.TwitchId);
     }
 }

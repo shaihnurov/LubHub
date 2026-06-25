@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -15,7 +15,10 @@ import type { Raffle } from "@/types/api";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { data: raffles, isLoading, mutate } = useSWR("my-raffles", api.raffles.listMy);
+  const { data: raffles, isLoading, mutate } = useSWR("my-raffles", api.raffles.listMy, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [creating, setCreating] = useState(false);

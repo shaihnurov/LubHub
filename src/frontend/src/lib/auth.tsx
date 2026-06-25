@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   createContext,
@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { api } from "@/lib/api";
-import { clearToken, getDisplayName, getToken } from "@/lib/token";
+import { clearToken, getDisplayName, getToken, getTwitchId, setToken } from "@/lib/token";
 
 const authListeners = new Set<() => void>();
 
@@ -19,27 +19,54 @@ function subscribeAuth(callback: () => void) {
   };
 }
 
-function getAuthSnapshot(): string | null {
-  const token = getToken();
-  if (!token) return null;
-  return getDisplayName();
+interface AuthSnapshot {
+  displayName: string | null;
+  twitchId: string | null;
 }
 
-function getServerSnapshot(): string | null {
-  return null;
+const EMPTY_SNAPSHOT: AuthSnapshot = { displayName: null, twitchId: null };
+
+let cachedSnapshot: AuthSnapshot | null = null;
+
+function getAuthSnapshot(): AuthSnapshot {
+  const token = getToken();
+  if (!token) return EMPTY_SNAPSHOT;
+
+  const next: AuthSnapshot = { displayName: getDisplayName(), twitchId: getTwitchId() };
+
+  if (
+    cachedSnapshot &&
+    cachedSnapshot.displayName === next.displayName &&
+    cachedSnapshot.twitchId === next.twitchId
+  ) {
+    return cachedSnapshot;
+  }
+
+  cachedSnapshot = next;
+  return next;
+}
+
+function getServerSnapshot(): AuthSnapshot {
+  return EMPTY_SNAPSHOT;
+}
+
+function notifyAuthListeners() {
+  authListeners.forEach((cb) => cb());
 }
 
 interface AuthContextValue {
   isAuthenticated: boolean;
   displayName: string | null;
+  twitchId: string | null;
   loginWithTwitch: () => Promise<void>;
+  login: (token: string, displayName: string, twitchId: string) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const displayName = useSyncExternalStore(
+  const snapshot = useSyncExternalStore(
     subscribeAuth,
     getAuthSnapshot,
     getServerSnapshot,
@@ -50,17 +77,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     window.location.href = url;
   }, []);
 
+  const login = useCallback((token: string, name: string, twitchId: string) => {
+    setToken(token, name, twitchId);
+    notifyAuthListeners();
+  }, []);
+
   const logout = useCallback(() => {
     clearToken();
-    authListeners.forEach((cb) => cb());
+    notifyAuthListeners();
   }, []);
 
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated: !!displayName,
-        displayName,
+        isAuthenticated: !!snapshot.displayName,
+        displayName: snapshot.displayName,
+        twitchId: snapshot.twitchId,
         loginWithTwitch,
+        login,
         logout,
       }}
     >

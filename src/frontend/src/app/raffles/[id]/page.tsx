@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import useSWR from "swr";
@@ -24,20 +24,43 @@ import { logger } from "@/lib/logger";
 export default function RaffleDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, twitchId } = useAuth();
   const raffleId = Number(params.id);
 
   const { data: raffle, mutate } = useSWR(
     raffleId ? `raffle-${raffleId}` : null,
-    () => api.raffles.getById(raffleId)
+    () => api.raffles.getById(raffleId),
+    { revalidateOnFocus: false, revalidateOnReconnect: false }
   );
 
+  const { data: participants } = useSWR(
+    raffleId && isAuthenticated ? `raffle-${raffleId}-participants` : null,
+    () => api.raffles.getParticipants(raffleId),
+    { revalidateOnFocus: false, revalidateOnReconnect: false }
+  );
+
+  const isOwner = useMemo(() => {
+    if (!twitchId || !raffle || !participants) return false;
+    return raffle.streamerId === Number(twitchId);
+  }, [twitchId, raffle, participants]);
+
+  const hasJoinedPersisted = useMemo(() => {
+    if (!twitchId || !participants) return false;
+    return participants.some((p) => p.twitchUserId === twitchId);
+  }, [twitchId, participants]);
+
+  const [hasJoinedLive, setHasJoinedLive] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(`joined-${raffleId}`) === "true";
+    }
+    return false;
+  });
   const [isJoining, setIsJoining] = useState(false);
-  const [hasJoined, setHasJoined] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [liveCount, setLiveCount] = useState<number | null>(null);
   const [winner, setWinner] = useState<{ twitchUserId: string; displayName: string } | null>(null);
 
+  const hasJoined = hasJoinedPersisted || hasJoinedLive;
   const participantCount = liveCount ?? raffle?.participantCount ?? 0;
 
   const handleParticipantCountUpdated = useCallback((count: number) => {
@@ -51,14 +74,15 @@ export default function RaffleDetailPage() {
 
   const handleJoinConfirmed = useCallback((id: number) => {
     if (id === raffleId) {
-      setHasJoined(true);
+      setHasJoinedLive(true);
       setIsJoining(false);
+      localStorage.setItem(`joined-${raffleId}`, "true");
     }
   }, [raffleId]);
 
   useEffect(() => {
-    if (!raffleId || raffle?.status !== "Active") return;
-    
+    if (!raffleId || raffle?.status !== "Active" || !isAuthenticated) return;
+
     let cleanup: (() => void) | undefined;
     let cancelled = false;
 
@@ -66,10 +90,10 @@ export default function RaffleDetailPage() {
       try {
         await startRaffleHub();
         if (cancelled) return;
-        
+
         await joinRaffleGroup(raffleId);
         if (cancelled) return;
-        
+
         cleanup = registerRaffleHandlers({
           onParticipantCountUpdated: handleParticipantCountUpdated,
           onWinnerDrawn: handleWinnerDrawn,
@@ -88,11 +112,16 @@ export default function RaffleDetailPage() {
       leaveRaffleGroup(raffleId).catch(() => {});
       stopRaffleHub().catch(() => {});
     };
-  }, [raffleId, raffle?.status, handleParticipantCountUpdated, handleWinnerDrawn, handleJoinConfirmed]);
+  }, [raffleId, raffle?.status, isAuthenticated, handleParticipantCountUpdated, handleWinnerDrawn, handleJoinConfirmed]);
 
   const handleJoin = async () => {
     if (!isAuthenticated) {
       setError("Please login to join the raffle");
+      return;
+    }
+
+    if (isOwner) {
+      setError("You are the owner of this raffle");
       return;
     }
 
@@ -210,7 +239,7 @@ export default function RaffleDetailPage() {
                       <div className="text-sm text-accent-cyan mb-2 font-medium">Winner</div>
                       <div className="text-2xl font-bold">{displayWinner.displayName}</div>
                     </div>
-                  </div>
+                </div>
                 </motion.div>
               )}
 
@@ -224,7 +253,17 @@ export default function RaffleDetailPage() {
                 </motion.div>
               )}
 
-              {raffle.status === "Active" && !hasJoined && (
+              {isOwner && raffle.status === "Active" && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="p-6 rounded-2xl bg-accent/10 border border-accent/20 text-accent text-center text-lg font-medium"
+                >
+                  You are the owner of this raffle
+                </motion.div>
+              )}
+
+              {raffle.status === "Active" && !hasJoined && !isOwner && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}

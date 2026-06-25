@@ -3,21 +3,16 @@ import type { RaffleHubHandlers } from "@/types/api";
 import { getToken } from "@/lib/token";
 import { logger } from "@/lib/logger";
 
-const HUB_PATH = "/hubs/raffle";
+const HUB_URL = "http://localhost:5217/hubs/raffle";
 
 let connection: HubConnection | null = null;
 let isConnecting = false;
-
-function getHubUrl(): string {
-  const baseUrl = process.env.NEXT_PUBLIC_SIGNALR_URL ?? "http://localhost:5217";
-  return `${baseUrl}${HUB_PATH}`;
-}
 
 export function getRaffleHub(): HubConnection {
   if (connection) return connection;
 
   connection = new HubConnectionBuilder()
-    .withUrl(getHubUrl(), { accessTokenFactory: () => getToken() ?? "" })
+    .withUrl(HUB_URL, { accessTokenFactory: () => getToken() ?? "" })
     .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
     .configureLogging(LogLevel.Warning)
     .build();
