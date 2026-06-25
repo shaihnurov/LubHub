@@ -13,4 +13,8 @@ public class ParticipantRepository(AppDbContext dbContext) : BaseRepository<Part
     /// <inheritdoc/>
     public async Task<Participant?> GetByTwitchUserIdAsync(int raffleId, string twitchUserId, CancellationToken ct = default)
         => await DbContext.Participants.FirstOrDefaultAsync(p => p.RaffleId == raffleId && p.TwitchUserId == twitchUserId, ct);
+
+    /// <inheritdoc/>
+    public async Task<int> GetParticipatedCountAsync(string twitchUserId, CancellationToken ct = default)
+        => await DbContext.Participants.CountAsync(p => p.TwitchUserId == twitchUserId, ct);
 }

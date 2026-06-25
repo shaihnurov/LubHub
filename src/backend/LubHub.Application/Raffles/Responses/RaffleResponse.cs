@@ -1,4 +1,6 @@
-﻿namespace LubHub.Application.Raffles.Responses;
+﻿using LubHub.Application.Winners.Responses;
+
+namespace LubHub.Application.Raffles.Responses;
 
 /// <summary>
 /// Response DTO representing a raffle public details
@@ -10,4 +12,4 @@
 /// <param name="StartedAt">Timestamp when the raffle was started, null if not yet started</param>
 /// <param name="EndedAt">Timestamp when the raffle was finished, null if not yet finished</param>
 /// <param name="ParticipantCount">Number of registered participants</param>
-public record RaffleResponse(int Id, int StreamerId, string StreamerName, string Title, string Status, DateTime CreatedAt, DateTime? StartedAt, DateTime? EndedAt, int ParticipantCount);
+public record RaffleResponse(int Id, int StreamerId, string StreamerName, string Title, string Status, DateTime CreatedAt, DateTime? StartedAt, DateTime? EndedAt, int ParticipantCount, WinnerResponse? Winner);

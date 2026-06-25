@@ -16,6 +16,14 @@ public interface IRaffleRepository : IBaseRepository<Raffle>
     Task<IReadOnlyList<Raffle>> GetByStreamerIdAsync(int streamerId, CancellationToken ct = default);
 
     /// <summary>
+    /// Retrieves the total number of giveaways created by a specific streamer
+    /// </summary>
+    /// <param name="streamerId">ID of the streamer</param>
+    /// <param name="ct">Cancellation token</param>
+    /// <returns>Total number of raffles</returns>
+    Task<int> GetCountAsync(int streamerId, CancellationToken ct = default);
+
+    /// <summary>
     /// Checks whether a streamer already has an active raffle
     /// </summary>
     /// <param name="streamerId">ID of the streamer</param>

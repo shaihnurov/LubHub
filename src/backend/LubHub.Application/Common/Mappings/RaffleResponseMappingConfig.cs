@@ -1,4 +1,5 @@
 ﻿using LubHub.Application.Raffles.Responses;
+using LubHub.Application.Winners.Responses;
 using LubHub.Domain.Entities;
 using Mapster;
 
@@ -24,6 +25,7 @@ public class RaffleResponseMappingConfig : IRegister
             .Map(dest => dest.CreatedAt, src => src.CreatedAt)
             .Map(dest => dest.StartedAt, src => src.StartedAt)
             .Map(dest => dest.EndedAt, src => src.EndedAt)
-            .Map(dest => dest.ParticipantCount, src => src.Participants.Count());
+            .Map(dest => dest.ParticipantCount, src => src.Participants.Count())
+            .Map(dest => dest.Winner, src => src.Winner == null ? null : new WinnerResponse(src.Winner.ParticipantId, src.Winner.TwitchUserId, src.Winner.DisplayName));
     }
 }

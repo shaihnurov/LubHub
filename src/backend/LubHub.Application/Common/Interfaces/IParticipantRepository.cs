@@ -15,4 +15,11 @@ public interface IParticipantRepository : IBaseRepository<Participant>
     /// <param name="ct">Cancellation token</param>
     /// <returns>Participant if found, otherwise null</returns>
     Task<Participant?> GetByTwitchUserIdAsync(int raffleId, string twitchUserId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Returns the total number of raffles the user has participated in
+    /// </summary>
+    /// <param name="twitchUserId">Twitch user ID of the participant</param>
+    /// <param name="ct">Cancellation token</param>
+    Task<int> GetParticipatedCountAsync(string twitchUserId, CancellationToken ct = default);
 }

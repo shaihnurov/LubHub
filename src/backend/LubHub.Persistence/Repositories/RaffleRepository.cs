@@ -18,11 +18,15 @@ public class RaffleRepository(AppDbContext dbContext) : BaseRepository<Raffle>(d
     /// <param name="ct">Cancellation token</param>
     /// <returns>Raffle with participants if found, otherwise null</returns>
     public override async Task<Raffle?> GetByIdAsync(int id, CancellationToken ct = default)
-        => await DbContext.Raffles.Include(x => x.Participants).Include(x => x.Streamer).FirstOrDefaultAsync(x => x.Id == id, ct);
+        => await DbContext.Raffles.Include(x => x.Participants).Include(x => x.Streamer).Include(x => x.Winner).FirstOrDefaultAsync(x => x.Id == id, ct);
 
     /// <inheritdoc/>
     public async Task<IReadOnlyList<Raffle>> GetByStreamerIdAsync(int streamerId, CancellationToken ct = default)
-        => await DbContext.Raffles.Include(x => x.Participants).Include(x => x.Streamer).Where(x => x.StreamerId == streamerId).ToListAsync(ct);
+        => await DbContext.Raffles.Include(x => x.Participants).Include(x => x.Streamer).Include(x => x.Winner).Where(x => x.StreamerId == streamerId).ToListAsync(ct);
+
+    /// <inheritdoc/>
+    public async Task<int> GetCountAsync(int streamerId, CancellationToken ct = default)
+        => await DbContext.Raffles.CountAsync(x => x.StreamerId == streamerId, ct);
 
     /// <inheritdoc/>
     public async Task<bool> IsActiveRaffleExistsAsync(int streamerId, CancellationToken ct = default)
@@ -31,7 +35,7 @@ public class RaffleRepository(AppDbContext dbContext) : BaseRepository<Raffle>(d
     /// <inheritdoc/>
     public async Task<IReadOnlyList<Raffle>> GetPublicListAsync(string? status, int? limit, CancellationToken cancellationToken = default)
     {
-        var query = DbContext.Raffles.Include(x => x.Participants).Include(x => x.Streamer).AsQueryable();
+        var query = DbContext.Raffles.Include(x => x.Participants).Include(x => x.Streamer).Include(x => x.Winner).AsQueryable();
 
         if (!string.IsNullOrEmpty(status) && Enum.TryParse<RaffleStatus>(status, out var raffleStatus))
             query = query.Where(x => x.Status == raffleStatus);
